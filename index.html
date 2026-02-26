@@ -10,20 +10,28 @@
         --radius: 14px;
         --shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
       }
-      * { box-sizing: border-box; }
+      * {
+        box-sizing: border-box;
+      }
       body {
         margin: 0;
-        font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-        background: #fafafa;
+        font-family:
+          system-ui,
+          -apple-system,
+          Segoe UI,
+          Roboto,
+          Helvetica,
+          Arial,
+          sans-serif;
+        background: #fffbf0;
         color: #111;
       }
 
       .topbar {
-        background: white;
+        background: #fdfbf2;
         padding: 14px 14px 10px;
-        border-bottom: 1px solid #eee;
+        border-bottom: 2px dashed #692751;
         z-index: 10;
-
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -33,15 +41,17 @@
         display: block;
         width: min(240px, 70%);
         height: auto;
-        margin: 0 auto 8px;
+        margin-bottom: 0;
+        padding-bottom: 0;
       }
 
       h1 {
         font-size: 22px;
         margin: 0 0 10px;
         text-align: center;
-        font-weight: 800;
+        font-weight: 900;
         letter-spacing: 1px;
+        color: #692751;
       }
 
       .actions {
@@ -61,12 +71,14 @@
         box-shadow: var(--shadow);
         font-weight: 700;
 
-        color: #111;                   /* stop iOS blue */
+        color: #111; /* stop iOS blue */
         -webkit-text-fill-color: #111; /* stop iOS blue */
         -webkit-appearance: none;
         appearance: none;
       }
-      button:active { transform: translateY(1px); }
+      button:active {
+        transform: translateY(1px);
+      }
 
       .status {
         margin: 0;
@@ -102,23 +114,28 @@
         font-weight: 650;
         font-size: 14px;
         aspect-ratio: 1 / 1;
-        transition: transform 0.12s ease, background 0.2s ease, color 0.2s ease;
+        transition:
+          transform 0.12s ease,
+          background 0.2s ease,
+          color 0.2s ease;
       }
 
       .square.checked {
-        border-color: #111;
-        background: #111;
+    
+        background: #2a444d;
         color: #fff;
         -webkit-text-fill-color: #fff; /* iOS */
       }
 
       /* Squares that are part of a completed line */
       .square.checked.linewin {
-        background: #6c47ff;
+        background: #692751;
         color: #fff;
         -webkit-text-fill-color: #fff;
         border-color: #fff;
-        box-shadow: 0 0 0 3px #fff inset, var(--shadow);
+        box-shadow:
+          0 0 0 3px #fff inset,
+          var(--shadow);
       }
 
       .badge {
@@ -133,7 +150,9 @@
       }
 
       /* --- Bingo overlay --- */
-      .overlay[hidden] { display: none; }
+      .overlay[hidden] {
+        display: none;
+      }
       .overlay {
         position: fixed;
         inset: 0;
@@ -197,7 +216,11 @@
   <body>
     <header class="topbar">
       <!-- Optional: remove if not needed -->
-      <!-- <img class="logo" src="YOUR_LOGO_URL.png" alt="Wedding" /> -->
+      <img
+        class="logo"
+        src="https://raw.githubusercontent.com/caitskinz/ElectricAve26/refs/heads/main/MHLogo.png"
+        alt="Wedding"
+      />
       <h1>Wedding Bingo</h1>
 
       <div class="actions">
@@ -214,10 +237,10 @@
 
     <div id="bingoOverlay" class="overlay" hidden>
       <div class="overlay-card">
-        <div class="overlay-title">FULL HOUSE! 🎉</div>
-        <div class="overlay-sub">Iconic. Go claim your prize.</div>
+        <div class="overlay-title">BINGO! 🎉</div>
+        <div class="overlay-sub">ur prize is a hangover</div>
         <div class="overlay-actions">
-          <button id="closeOverlayBtn" type="button">Cheers 🥂</button>
+          <button id="closeOverlayBtn" type="button">Congrats 🥂</button>
         </div>
       </div>
       <div id="confetti" class="confetti" aria-hidden="true"></div>
@@ -233,7 +256,8 @@
          - Line highlights + full-grid celebration
          ========================= */
 
-      const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR8p_z-38uiG_0kKaajRrRDHmWHa-wmbxbmqJRB-NHtsxhUTNOddGU1iS72Bslf9ZOP-nud7JWnN9zX/pub?output=csv"; // Column A ideas, header row optional
+      const SHEET_CSV_URL =
+        "https://docs.google.com/spreadsheets/d/e/2PACX-1vR8p_z-38uiG_0kKaajRrRDHmWHa-wmbxbmqJRB-NHtsxhUTNOddGU1iS72Bslf9ZOP-nud7JWnN9zX/pub?output=csv"; // Column A ideas, header row optional
       const GRID_DIM = 4;
       const GRID_SIZE = GRID_DIM * GRID_DIM; // 16
       const IDEAS_NEEDED = GRID_SIZE;
@@ -242,27 +266,50 @@
       const OPTIONS_CACHE_KEY = "wedding-bingo-v1-options-cache";
       const WINS_KEY = "wedding-bingo-v1-wins";
 
-      function $(id) { return document.getElementById(id); }
-      function setStatus(msg) { const el = $("status"); if (el) el.textContent = msg; }
+      function $(id) {
+        return document.getElementById(id);
+      }
+      function setStatus(msg) {
+        const el = $("status");
+        if (el) el.textContent = msg;
+      }
 
       function loadState() {
-        try { const raw = localStorage.getItem(STORE_KEY); return raw ? JSON.parse(raw) : null; }
-        catch { return null; }
+        try {
+          const raw = localStorage.getItem(STORE_KEY);
+          return raw ? JSON.parse(raw) : null;
+        } catch {
+          return null;
+        }
       }
-      function saveState(state) { localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
+      function saveState(state) {
+        localStorage.setItem(STORE_KEY, JSON.stringify(state));
+      }
 
       function loadWins() {
-        try { return Number(localStorage.getItem(WINS_KEY) || "0"); }
-        catch { return 0; }
+        try {
+          return Number(localStorage.getItem(WINS_KEY) || "0");
+        } catch {
+          return 0;
+        }
       }
-      function saveWins(wins) { localStorage.setItem(WINS_KEY, String(wins)); }
+      function saveWins(wins) {
+        localStorage.setItem(WINS_KEY, String(wins));
+      }
 
       function loadCachedOptions() {
-        try { const raw = localStorage.getItem(OPTIONS_CACHE_KEY); return raw ? JSON.parse(raw) : null; }
-        catch { return null; }
+        try {
+          const raw = localStorage.getItem(OPTIONS_CACHE_KEY);
+          return raw ? JSON.parse(raw) : null;
+        } catch {
+          return null;
+        }
       }
       function saveCachedOptions(items) {
-        localStorage.setItem(OPTIONS_CACHE_KEY, JSON.stringify({ savedAt: new Date().toISOString(), items }));
+        localStorage.setItem(
+          OPTIONS_CACHE_KEY,
+          JSON.stringify({ savedAt: new Date().toISOString(), items }),
+        );
       }
 
       function randomInt(min, maxExclusive) {
@@ -270,7 +317,7 @@
         if (range <= 0) return min;
 
         if (crypto?.getRandomValues) {
-          const maxUint = 0xFFFFFFFF;
+          const maxUint = 0xffffffff;
           const limit = maxUint - (maxUint % range);
           const buf = new Uint32Array(1);
           while (true) {
@@ -302,15 +349,24 @@
           const next = text[i + 1];
 
           if (inQuotes) {
-            if (c === '"' && next === '"') { field += '"'; i++; }
-            else if (c === '"') inQuotes = false;
+            if (c === '"' && next === '"') {
+              field += '"';
+              i++;
+            } else if (c === '"') inQuotes = false;
             else field += c;
           } else {
             if (c === '"') inQuotes = true;
-            else if (c === ",") { row.push(field); field = ""; }
-            else if (c === "\n") { row.push(field); rows.push(row); row = []; field = ""; }
-            else if (c === "\r") { /* ignore */ }
-            else field += c;
+            else if (c === ",") {
+              row.push(field);
+              field = "";
+            } else if (c === "\n") {
+              row.push(field);
+              rows.push(row);
+              row = [];
+              field = "";
+            } else if (c === "\r") {
+              /* ignore */
+            } else field += c;
           }
         }
 
@@ -322,9 +378,7 @@
       // Column A only; if first row is a header ("Wedding", "Bingo", etc), we skip it automatically if it looks header-ish.
       function extractIdeasFromCSV(text) {
         const rows = parseCSVToRows(text);
-        const items = rows
-          .map(r => (r[0] ?? "").trim())
-          .filter(Boolean);
+        const items = rows.map((r) => (r[0] ?? "").trim()).filter(Boolean);
 
         // If you have a header in A1, remove it:
         // heuristic: if first cell contains "day" or "wedding" or "bingo", drop it
@@ -342,7 +396,7 @@
           createdAt: new Date().toISOString(),
           board,
           checked: Array(GRID_SIZE).fill(false),
-          celebratedFull: false
+          celebratedFull: false,
         };
       }
 
@@ -374,19 +428,24 @@
       function getLineWinSet(checked) {
         const winners = new Set();
         for (const line of WIN_LINES) {
-          if (line.every(i => checked[i])) line.forEach(i => winners.add(i));
+          if (line.every((i) => checked[i]))
+            line.forEach((i) => winners.add(i));
         }
         return winners;
       }
 
       function vibrate(ms = 40) {
-        try { navigator.vibrate?.(ms); } catch {}
+        try {
+          navigator.vibrate?.(ms);
+        } catch {}
       }
 
       let audioCtx = null;
       function playWinSound() {
         try {
-          audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+          audioCtx =
+            audioCtx ||
+            new (window.AudioContext || window.webkitAudioContext)();
           const o = audioCtx.createOscillator();
           const g = audioCtx.createGain();
           o.type = "sine";
@@ -427,14 +486,23 @@
           p.style.width = `${w}px`;
           p.style.height = `${h}px`;
 
-          const palette = ["#111", "#ff3b30", "#ffcc00", "#34c759", "#0a84ff", "#bf5af2"];
+          const palette = [
+            "#111",
+            "#ff3b30",
+            "#ffcc00",
+            "#34c759",
+            "#0a84ff",
+            "#bf5af2",
+          ];
           p.style.background = palette[randomInt(0, palette.length)];
           p.style.transform = `rotate(${randomInt(0, 360)}deg)`;
 
           confetti.appendChild(p);
         }
 
-        setTimeout(() => { confetti.innerHTML = ""; }, 1600);
+        setTimeout(() => {
+          confetti.innerHTML = "";
+        }, 1600);
       }
 
       function showBingoOverlay() {
@@ -477,7 +545,9 @@
 
         const items = extractIdeasFromCSV(text);
         if (items.length < IDEAS_NEEDED) {
-          throw new Error(`Need at least ${IDEAS_NEEDED} ideas (found ${items.length}).`);
+          throw new Error(
+            `Need at least ${IDEAS_NEEDED} ideas (found ${items.length}).`,
+          );
         }
         return items;
       }
@@ -497,7 +567,10 @@
           const isChecked = !!state.checked[idx];
           const isLineWin = lineWins.has(idx);
 
-          btn.className = "square" + (isChecked ? " checked" : "") + (isLineWin ? " linewin" : "");
+          btn.className =
+            "square" +
+            (isChecked ? " checked" : "") +
+            (isLineWin ? " linewin" : "");
           btn.textContent = text;
 
           btn.addEventListener("click", () => {
@@ -560,7 +633,9 @@
       async function registerServiceWorker() {
         if (!("serviceWorker" in navigator)) return;
         try {
-          await navigator.serviceWorker.register(new URL("sw.js", window.location.href));
+          await navigator.serviceWorker.register(
+            new URL("sw.js", window.location.href),
+          );
         } catch (e) {
           console.warn("Service worker registration failed:", e);
         }
@@ -582,7 +657,8 @@
             state = makeNewBoardFromOptions(options);
             saveState(state);
           } else {
-            if (typeof state.celebratedFull !== "boolean") state.celebratedFull = false;
+            if (typeof state.celebratedFull !== "boolean")
+              state.celebratedFull = false;
           }
         } catch (e) {
           const cached = loadCachedOptions();
@@ -592,7 +668,8 @@
               state = makeNewBoardFromOptions(options);
               saveState(state);
             } else {
-              if (typeof state.celebratedFull !== "boolean") state.celebratedFull = false;
+              if (typeof state.celebratedFull !== "boolean")
+                state.celebratedFull = false;
             }
           } else if (!state?.board?.length) {
             console.error(e);
