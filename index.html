@@ -146,6 +146,13 @@
         font-size: 13px;
       }
 
+      .footer {
+      padding: 14px;
+      text-align: center;
+      color: #000;
+      border-top: 2px dashed #692751;
+    }
+
       /* --- Bingo overlay --- */
       .overlay[hidden] {
         display: none;
@@ -219,7 +226,6 @@
         alt="Wedding"
       />
       <h1>Wedding Bingo</h1>
-
       <div class="actions">
         <button id="newBoardBtn" type="button">Reshuffle</button>
         <button id="resetTicksBtn" type="button">Clear</button>
@@ -231,6 +237,9 @@
     <main>
       <section class="grid" id="grid" aria-label="Bingo grid"></section>
     </main>
+    <footer class="footer">
+        <small>🤵‍♂️ May the odds be ever on your favour 👰</small>
+    </footer>
 
     <div id="bingoOverlay" class="overlay" hidden>
       <div class="overlay-card">
